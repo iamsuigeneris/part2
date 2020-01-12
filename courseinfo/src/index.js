@@ -19,7 +19,7 @@ const Content = ({course}) => {
 const Total = ({course}) => {
     const total = course.parts[0].exercises + course.parts[1].exercises  + course.parts[2].exercises + course.parts[3].exercises
     return(
-        <p>Number of exercises {total}</p>
+        <strong>Number of exercises {total}</strong>
     )
 }
 
@@ -54,7 +54,7 @@ const App = () => {
             },
             {
                 name:'Redux',
-                exercises:7,
+                exercises:11,
                 id:4
             }
         ]
