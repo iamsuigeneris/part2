@@ -10,7 +10,8 @@ const Content = ({course}) => {
         <div>
             <Part course={course.parts[0]} />
             <Part course={course.parts[1]} />
-            <Part course={course.parts[2]} />         
+            <Part course={course.parts[2]} />    
+            <Part course={course.parts[3]} />        
         </div>
     )
 }
