@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Person from './components/Person'
 
 const App = () => {
-    const [ persons, setPersons] = useState([{name:'Arto Hellas', id:1}])
+    const [ persons, setPersons] = useState([{name:'Arto Hellas',id:1}])
     const [ newName, setNewName ] = useState('')
 
     const rows = () => persons.map(person => 
@@ -18,12 +18,18 @@ const App = () => {
             id:persons.length + 1  
         }
 
-        setPersons(persons.concat(personObject))
+        let people = persons.map(person => person.name)
+        if(people.includes(newName)){
+            alert(`${newName} is already added to phonebook`)  
+        }else{
+            setPersons(persons.concat(personObject))
+        }            
         setNewName('')
+            
     }
 
     const handlePersonChange = (event) => {
-        setNewName(event.target.value)
+            setNewName(event.target.value) 
     }
 
     return(
