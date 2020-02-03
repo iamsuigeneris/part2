@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios'
-// import Country from './components/Country'
 import Search from './components/Search'
 
 const App = (props) => {
