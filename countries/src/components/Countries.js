@@ -1,16 +1,11 @@
 import React from 'react'
 import Country from './Country'
 
-const Countries = ({country,setCountry,countries,setCountries,show,setShow}) => {
+const Countries = ({country,setCountry,countries,show,setShow}) => {
 
     let display = <div></div>
     let displayCountry = country ? <Country country={country} /> : display
     let displayShow = show ? <Country country={show}/> : display
-
-    // const countryLanguages = (languages) => languages.map(
-    //     language => 
-    //       <li key={language.name}> {language.name} </li>
-    // )
 
     if(countries.length === 0){
         setCountry(false)
