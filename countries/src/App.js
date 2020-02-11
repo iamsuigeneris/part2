@@ -1,11 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios'
 import Search from './components/Search'
+import Countries from './components/Countries'
 
 const App = (props) => {
   const [countries, setCountries] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
- 
+  const [country, setCountry] = useState(false)
+  const [show, setShow] = useState(false)
+  
 //   useEffect(() => {
 //     axios
 //         .get('https://restcountries.eu/rest/v2/all')
@@ -18,6 +21,7 @@ const App = (props) => {
 const handleSearchChange = (event) => {
   setSearchTerm(event.target.value)
   getDataFromAPI(event.target.value)
+ 
 }
 
 // inspired by vsparrow's code from github.. didn't use useEffect here
@@ -31,41 +35,18 @@ const getDataFromAPI = (name) => {
   })
 }
 
-  const countryLanguages = (languages) => languages.map(
-      language => 
-        <li key={language.name}> {language.name} </li>
-    )
-
-  const rows = () => {
-    if(countries.length === 0){
-      return <p></p>
-    }
-    else if(countries.length > 10){
-      return <div>Too many matches, specify another filter</div>
-    }
-    else if(countries.length > 1){
-      const displayCountries = countries.map(country => <div key={country.alpha3Code}> {country.name}</div>)
-      return displayCountries;
-    }
-    else if(countries.length === 1){
-      return(
-        <div>
-          <h2>{countries[0].name}</h2>
-          <div>capital {countries[0].capital}</div>
-          <div>population {countries[0].population}</div>
-          <h2>languages</h2>
-          <ul>{countryLanguages(countries[0].languages)}</ul>
-          <img src={countries[0].flag} width="100px" />
-        </div>
-      )
-    }
-  }
-
   return(
 
       <div>
             <Search onChange={searchTerm} handleSearchChange={handleSearchChange} />
-            <div>{rows()}</div>
+          
+            <Countries countries={countries} 
+                       country={country} 
+                       show={show}
+                       setCountries={setCountries}
+                       setCountry={setCountry}
+                       setShow={setShow} 
+                    />
       </div>
     )
 }
