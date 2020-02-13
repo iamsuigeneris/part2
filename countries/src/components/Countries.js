@@ -21,6 +21,7 @@ const Countries = ({country,setCountry,countries,show,setShow}) => {
     else if(countries.length === 1){
         setCountry(countries[0])
         setShow(false)
+       
     }
 
     const handleClicks = (country) => {
@@ -31,7 +32,6 @@ const Countries = ({country,setCountry,countries,show,setShow}) => {
             setShow(country)
         }
     }
-
     return(
         <div>
             {display}
