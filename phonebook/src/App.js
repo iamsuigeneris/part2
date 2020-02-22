@@ -3,6 +3,7 @@ import axios from 'axios'
 import Person from './components/Person'
 import Form from './components/Form'
 import Filters from './components/Filters'
+import personService from './services/persons'
 
 const App = () => {
 
@@ -12,13 +13,9 @@ const App = () => {
     const [ searchTerm, setSearchTerm ] = useState('')
    
     useEffect(() => {
-        console.log('effect')
-        axios
-            .get('http://localhost:3001/persons')
-            .then( response => {
-                console.log('promise fulfilled')
-                setPersons(response.data)
-            })
+        personService
+        .getAll()
+            .then( initialPersons => setPersons(initialPersons))    
     }, [])
 
     const rows = () => display.map(person => 
@@ -41,15 +38,16 @@ const App = () => {
         if(people.includes(newName)){
             alert(`${newName} is already added to phonebook`)  
         }else{
-            axios
-            .post('http://localhost:3001/persons', personObject)
-            .then(response => {
-                setPersons(persons.concat(personObject))
+            personService
+            .create(personObject)
+            .then( data => { 
+                setPersons(persons.concat(data))
+                setNewName('')
+                setNewNumber('')
             }) 
         }     
-        setNewName('')
-        setNewNumber('')
     }
+    
     
     const handleNameChange = (event) => {
         setNewName(event.target.value)       
