@@ -6,38 +6,23 @@
       "id": 1
     },
     {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": 2
-    },
-    {
       "name": "Dan Abramov",
       "number": "12-43-234345",
       "id": 3
     },
     {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "id": 4
-    },
-    {
-      "name": "Olusegun Obasanjo",
-      "number": "234-3783873",
+      "name": "Kunle Babatola",
+      "number": "224-746730",
       "id": 5
     },
     {
-      "name": "Bill Clinton",
-      "number": "112-9938383",
+      "name": "Tania Rasnia",
+      "number": "111-8377664",
       "id": 6
     },
     {
-      "name": "Barack Obama",
-      "number": "986-3383749",
-      "id": 7
-    },
-    {
-      "name": "Lanre Irewole",
-      "number": "234-98773",
+      "name": "Wes Bos",
+      "number": "213-7389030",
       "id": 8
     }
   ]

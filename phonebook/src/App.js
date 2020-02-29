@@ -19,7 +19,10 @@ const App = () => {
     }, [])
 
     const rows = () => display.map(person => 
-        <Person key={person.id} person={person} /> 
+        <Person key={person.id} 
+                person={person} 
+                deletePersonOf={()=> deletePersonOf(person.id,person.name)}  
+        /> 
     )
     
     const display = searchTerm
@@ -47,7 +50,17 @@ const App = () => {
             }) 
         }     
     }
-    
+
+    const deletePersonOf = (id,name) => {
+        if(window.confirm(`Delete ${name}?`))  {  
+            personService
+            .deletePerson(id,name)
+            .then( returnedPerson => {
+                setPersons(returnedPerson)
+            })
+        
+        }
+    }
     
     const handleNameChange = (event) => {
         setNewName(event.target.value)       
