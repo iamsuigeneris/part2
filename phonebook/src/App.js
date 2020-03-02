@@ -28,7 +28,9 @@ const App = () => {
     const display = searchTerm
         ? persons.filter(person => (person.name).toLowerCase().includes(searchTerm))
         : persons;
-  
+    
+    const checkName = persons.some(person => person.name === newName)   
+
     const addName = (event) => {
         event.preventDefault()
 
@@ -37,18 +39,31 @@ const App = () => {
             number: newNumber
         }
 
-        let people = persons.map(person => person.name)
-        if(people.includes(newName)){
-            alert(`${newName} is already added to phonebook`)  
-        }else{
-            personService
-            .create(personObject)
-            .then( data => { 
+        const checkNumber = id => {
+            const name = persons.find(n => n.name === newName)
+            const updateNumber = {...name, number:newNumber}
+
+            if(window.confirm(`${newName} is already in the phonebook, replace number?`)){
+                personService
+                    .update(name.id, updateNumber)
+                    .then(returnedNumber => {
+                        setPersons(persons.map(name => name.id !== id ? name : returnedNumber))
+                    })
+            }
+        }
+
+        const displayMessage = (action) => {
+            action
+            ? checkNumber()
+            : personService.create(personObject).then(data => {
                 setPersons(persons.concat(data))
-                setNewName('')
-                setNewNumber('')
-            }) 
-        }     
+            })
+        }
+
+        displayMessage(checkName)
+        setNewName('')
+        setNewNumber('')
+
     }
 
     const deletePersonOf = (id,name) => {
