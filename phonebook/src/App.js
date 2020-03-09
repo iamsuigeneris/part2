@@ -3,7 +3,9 @@ import axios from 'axios'
 import Person from './components/Person'
 import Form from './components/Form'
 import Filters from './components/Filters'
+import Notification from './components/Notification'
 import personService from './services/persons'
+import './index.css'
 
 const App = () => {
 
@@ -11,6 +13,7 @@ const App = () => {
     const [ newName, setNewName ] = useState('')
     const [ newNumber, setNewNumber ] = useState('')
     const [ searchTerm, setSearchTerm ] = useState('')
+    const [message, setMessage] = useState(null)
    
     useEffect(() => {
         personService
@@ -49,6 +52,7 @@ const App = () => {
                     .then(returnedNumber => {
                         setPersons(persons.map(name => name.id !== id ? name : returnedNumber))
                     })
+                  
             }
         }
 
@@ -56,8 +60,12 @@ const App = () => {
             action
             ? checkNumber()
             : personService.create(personObject).then(data => {
+                setMessage(`Added ${data.name}`)
                 setPersons(persons.concat(data))
             })
+            setTimeout(() => {
+                setMessage(null)
+              }, 4000)
         }
 
         displayMessage(checkName)
@@ -90,6 +98,7 @@ const App = () => {
     return(
         <div>
             <h2>Phonebook</h2>
+            <Notification message={message} />
 
             <Filters searchTerm={searchTerm}
                      handleSearchChange={handleSearchChange}
