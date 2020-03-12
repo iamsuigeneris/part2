@@ -5,7 +5,7 @@ import Form from './components/Form'
 import Filters from './components/Filters'
 import Notification from './components/Notification'
 import personService from './services/persons'
-import './index.css'
+// import './index.css'
 
 const App = () => {
 
@@ -14,17 +14,20 @@ const App = () => {
     const [ newNumber, setNewNumber ] = useState('')
     const [ searchTerm, setSearchTerm ] = useState('')
     const [message, setMessage] = useState(null)
+    const [success, setSuccess] = useState(null)
    
     useEffect(() => {
         personService
         .getAll()
             .then( initialPersons => setPersons(initialPersons))    
+            .catch( error => showMessage("Can't retireve data now", false))
     }, [])
 
-    const rows = () => display.map(person => 
+    const rows = () => display.map(person =>
         <Person key={person.id} 
                 person={person} 
-                deletePersonOf={()=> deletePersonOf(person.id,person.name)}  
+                deletePersonOf={() => deletePersonOf(person)}  
+              
         /> 
     )
     
@@ -32,58 +35,86 @@ const App = () => {
         ? persons.filter(person => (person.name).toLowerCase().includes(searchTerm))
         : persons;
     
-    const checkName = persons.some(person => person.name === newName)   
-
     const addName = (event) => {
         event.preventDefault()
 
         const personObject = {
             name: newName,
-            number: newNumber
+            number: newNumber,
+            
         }
 
-        const checkNumber = id => {
-            const name = persons.find(n => n.name === newName)
-            const updateNumber = {...name, number:newNumber}
+        if(persons.some( e => e.name === newName)){
+            let personId = persons.find( item => item.name === newName)
 
-            if(window.confirm(`${newName} is already in the phonebook, replace number?`)){
+            let updatedEntry = Object.assign(personId, personObject)
+
+            if(window.confirm(`${newName} Do you want to update with number ${newNumber}`)){
                 personService
-                    .update(name.id, updateNumber)
-                    .then(returnedNumber => {
-                        setPersons(persons.map(name => name.id !== id ? name : returnedNumber))
+                    .update(personId.id, personObject)
+                    .then(() => {
+                        setPersons(persons.map(item => (item.name === newName ? updatedEntry : item)));
+                        setNewName("");
+                        setNewNumber("")
+                        showMessage(`User ${newName} phone number updated`);
+                    })
+                    .catch( error => {
+                        showMessage(
+                            `Update failed. User ${newName} has already been removed from the phonebook.`,false
+                        )
+                        setPersons(persons.filter( n => n.name !== newName ))
                     })
                   
             }
+        }else{
+            if( persons.some( e => e.number === newNumber)) {
+                showMessage(`${newNumber} is already in the phonebook.`, false)
+            }else{
+                if( newName === "" || newNumber === "") {
+                    showMessage(`The name and number must not be empty`, false)
+                }else{
+                    personService
+                        .create(personObject)
+                        .then(returnedPerson => {
+                            setPersons(persons.concat(returnedPerson))
+                            setNewName("")
+                            setNewNumber("")
+                            showMessage(`User ${newName} has been added to the phonebook`)
+                        })
+                        .catch(error => {
+                            return showMessage(`Failed to add number. More about error: ${error.response.data.error}`,false)
+                        })
+                        personService
+                            .getAll()
+                            .then(response => {
+                                setPersons(response)
+                            })
+                            .catch( error => showMessage("Could not retrive data", false))
+                }
+            }
         }
-
-        const displayMessage = (action) => {
-            action
-            ? checkNumber()
-            : personService.create(personObject).then(data => {
-                setMessage(`Added ${data.name}`)
-                setPersons(persons.concat(data))
-            })
-            setTimeout(() => {
-                setMessage(null)
-              }, 4000)
-        }
-
-        displayMessage(checkName)
-        setNewName('')
-        setNewNumber('')
-
     }
 
-    const deletePersonOf = (id,name) => {
-        if(window.confirm(`Delete ${name}?`))  {  
+    const deletePersonOf = person => {
+        if(window.confirm(`Delete ${person.name}?`))  {  
             personService
-            .deletePerson(id,name)
-            .then( returnedPerson => {
-                setPersons(returnedPerson)
-            })
-        
+                .deletePerson(person.id)
+                .then( () => {
+                    setPersons(persons.filter(item => item.id !== person.id))
+                    showMessage(`${person.name} has been removed`)
+                })
+               
+            .catch( error => {
+                showMessage(`Removal failed ${person.name} has already been removed`,false) 
+                personService
+                    .getAll()
+                    .then( response => {
+                        setPersons(response)
+                    })
+                    .catch(error => showMessage("Could not retrive data", false))
+                })
+            }
         }
-    }
     
     const handleNameChange = (event) => {
         setNewName(event.target.value)       
@@ -95,10 +126,20 @@ const App = () => {
         setSearchTerm(event.target.value)
     }
 
+    const showMessage = (msg, successMsg = true) => {
+        setMessage(msg)
+        setSuccess(successMsg)
+
+        setTimeout(() => {
+            setMessage(null)
+            setSuccess(null)
+        },4000)
+    }
+
     return(
         <div>
             <h2>Phonebook</h2>
-            <Notification message={message} />
+            <Notification message={message} success={success} />
 
             <Filters searchTerm={searchTerm}
                      handleSearchChange={handleSearchChange}
@@ -112,6 +153,9 @@ const App = () => {
             />
             <h2>Numbers</h2>
             <div> {rows()} </div>     
+
+
+
         </div>
     )
 }
